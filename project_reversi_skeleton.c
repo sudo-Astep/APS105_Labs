@@ -13,7 +13,7 @@
 
 // =========   Function declaration  ==========
 
-bool isLegalMove (char[], char[][3]);
+bool isLegalMove (char[], char[][3], int);
 void changeBoard (char[][26], char[], int);
 void changeBoardInDirection (char[][26], int, int, int, char, int, int);
 void checkPossibleMoves (char[][26], int, int, int, char (*whiteMoves)[3], char (*blackMoves)[3]);
@@ -101,7 +101,7 @@ int main (void)
 	// Checks if move is legal for white player
 	if (input[0] == 'W')
 	{
-		if (isLegalMove (temp, whiteMoves))
+		if (isLegalMove (temp, whiteMoves, maxLinesWhite))
 		{
 			printf ("Valid move.\n");
 
@@ -118,7 +118,7 @@ int main (void)
 	// Checks if move is legal for vlack player
 	if (input[0] == 'B')
 	{
-		if (isLegalMove (temp, blackMoves))
+		if (isLegalMove (temp, blackMoves, maxLinesBlack))
 		{
 			printf ("Valid move.\n");
 
@@ -200,11 +200,16 @@ void changeBoardInDirection (char board[][26], int n, int row, int col, char col
  * -----------------
  * Checks if the given move is legal
  */
-bool isLegalMove (char move[], char availableMoves[][3])
+bool isLegalMove (char move[], char availableMoves[][3], int maxMoves)
 {
+	printf("%s ", move);
+
 	// Checks if the move is in the array of all available moves
-	for (int i = 0; i <= sizeof availableMoves / sizeof(availableMoves[0]); i++)
+	for (int i = 0; i <= maxMoves; i++)
 	{
+		printf("%s ", availableMoves[i]);
+		printf("%d\n", strcmp (move, availableMoves[i]));
+
 		if (strcmp (move, availableMoves[i]) == 0)
 			return true;
 	}
@@ -247,7 +252,7 @@ void printBoard (char board[][26], int n)
  */
 bool positionInBounds (int n, int row, int col)
 {
-	if (row >= n || col >= n)
+	if ((row >= n || col >= n) || (row < 0 || col < 0))
 		return false;
 
 	return true;
@@ -284,8 +289,8 @@ bool checkLegalInDirection (char board[][26], int n, int row, int col, char colo
 		int currentRow = row + (i * deltaRow);
 		int currentCol = col + (i * deltaCol);
 
-		// False if goes out of bounds without hittin a true
-		if (!positionInBounds (n, currentRow, currentCol))
+		// False if goes out of bounds without hitting a true
+		if (!positionInBounds(n, currentRow + deltaRow, currentCol + deltaCol))
 			return false;
 
 		// If the player color is hit and all previous spots were opposite, return true
